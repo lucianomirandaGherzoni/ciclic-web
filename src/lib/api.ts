@@ -12,11 +12,24 @@ import type {
 
 const API_URL = process.env.API_URL;
 
+// Todas las llamadas al backend pasan por acá: sin timeout, un backend colgado
+// puede tildar el build entero (layout.tsx hace estos fetches en TODAS las páginas).
+async function fetchApi(path: string, timeoutMs = 15000): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(`${API_URL}${path}`, { signal: controller.signal, next: { revalidate: 60 } });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 // Se llama desde Server Components — config-web cambia poco, se revalida cada 60s.
 export async function getConfigWeb(): Promise<ConfigWeb> {
   try {
-    const res = await fetch(`${API_URL}config-web`, { next: { revalidate: 60 } });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const res = await fetchApi("config-web");
     return await res.json();
   } catch {
     return {};
@@ -25,8 +38,7 @@ export async function getConfigWeb(): Promise<ConfigWeb> {
 
 export async function getPromoModal(): Promise<PromoModalConfig> {
   try {
-    const res = await fetch(`${API_URL}promo-modal`, { next: { revalidate: 60 } });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const res = await fetchApi("promo-modal");
     return await res.json();
   } catch {
     return {};
@@ -87,17 +99,12 @@ function mapEventos(data: EventoDTO[]): EventoUI[] {
 // Se llama desde Server Components. Timeout de 30s para tolerar cold-starts del backend
 // (mismo margen que el sitio viejo); si falla, la sección de eventos simplemente no se muestra.
 export async function getEventos(): Promise<EventoUI[]> {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 30000);
   try {
-    const res = await fetch(`${API_URL}eventos`, { signal: controller.signal, next: { revalidate: 60 } });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const res = await fetchApi("eventos", 30000);
     const data: EventoDTO[] = await res.json();
     return Array.isArray(data) ? mapEventos(data) : [];
   } catch {
     return [];
-  } finally {
-    clearTimeout(timeoutId);
   }
 }
 
@@ -105,8 +112,7 @@ export async function getEventos(): Promise<EventoUI[]> {
 // (client-side); acá el cache de fetch de Next cumple el mismo rol a nivel servidor.
 export async function getGaleria(): Promise<GaleriaItemUI[]> {
   try {
-    const res = await fetch(`${API_URL}galeria`, { next: { revalidate: 60 } });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const res = await fetchApi("galeria");
     const data: GaleriaDTO[] = await res.json();
     if (!Array.isArray(data)) return [];
     return data.map((item) => ({
@@ -134,8 +140,7 @@ function toYoutubeEmbedUrl(url: string): string {
 // de YouTube).
 export async function getVenues(): Promise<VenueUI[]> {
   try {
-    const res = await fetch(`${API_URL}venues`, { next: { revalidate: 60 } });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const res = await fetchApi("venues");
     const data: VenueDTO[] = await res.json();
     if (!Array.isArray(data)) return [];
     return data.map((item) => ({

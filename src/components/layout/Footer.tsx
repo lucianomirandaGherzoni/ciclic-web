@@ -92,7 +92,7 @@ export default function Footer({ eventosDisponibles = true }: FooterProps) {
         </div>
 
         <div className="mt-16 text-center">
-          <h1 className="text-lg font-semibold uppercase tracking-wide text-white">ciclic community</h1>
+          <h1 className="text-4xl font-semibold uppercase tracking-wide text-white md:text-6xl">ciclic community</h1>
         </div>
       </div>
     </footer>

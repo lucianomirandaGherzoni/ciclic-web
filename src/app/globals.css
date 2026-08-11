@@ -29,7 +29,7 @@
   --shadow-accent-pink-glow: 0 0 20px rgb(80, 80, 80);
 
   --font-sans: var(--font-montserrat);
-  --font-heading: var(--font-unbounded);
+  --font-heading: var(--font-montserrat);
 
   --radius-image: var(--radius-image);
   --radius-container: var(--radius-container);

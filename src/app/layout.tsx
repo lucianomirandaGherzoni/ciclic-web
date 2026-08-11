@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Montserrat, Unbounded } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { LenisProvider } from "@/hooks/useLenis";
 import { MenuContainerProvider } from "@/hooks/useMenuContainer";
@@ -13,11 +13,6 @@ const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
   style: ["normal", "italic"],
-});
-
-const unbounded = Unbounded({
-  variable: "--font-unbounded",
-  subsets: ["latin"],
 });
 
 // Mismo dominio placeholder que usaba el sitio viejo (ciclic-demo-v1.vercel.app) —
@@ -95,7 +90,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const eventosDisponibles = eventos.length > 0;
 
   return (
-    <html lang="es" className={`${montserrat.variable} ${unbounded.variable}`}>
+    <html lang="es" className={montserrat.variable}>
       <head>
         <link
           rel="stylesheet"

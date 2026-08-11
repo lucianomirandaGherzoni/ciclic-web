@@ -154,7 +154,7 @@ export default function HighlightsCarousel({ venues }: Props) {
               </div>
               <div className="pointer-events-none absolute left-1/2 top-1/2 hidden w-full -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-4 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100 lg:flex">
                 <i className="bi bi-youtube text-6xl text-[#FF0000] [filter:drop-shadow(0_4px_20px_rgba(0,0,0,0.8))]" />
-                <span className="font-heading text-xl font-extralight tracking-[4px] text-white [text-shadow:0_4px_20px_rgba(0,0,0,0.8)]">
+                <span className="font-heading text-xl font-medium tracking-[4px] text-white [text-shadow:0_4px_20px_rgba(0,0,0,0.8)]">
                   PUESTA EN ESCENA
                 </span>
               </div>
