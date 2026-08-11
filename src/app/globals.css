@@ -1,26 +1,157 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary-black: #0a0a0a;
+  --secondary-black: #0f0f0f;
+  --primary-white: #fff;
+  --accent-gray: #9ca3af;
+  --accent-gray-light: #d1d5db;
+  --accent-pink: rgb(128, 129, 129);
+
+  /* Sistema de border-radius del sitio, centralizado en 3 variables.
+     Cambiar acá afecta todos los componentes de una — hoy en 0px (estética
+     cuadrada/profesional) salvo el botón flotante de WhatsApp, que queda
+     circular a propósito y no usa ninguna de estas variables. */
+  --radius-image: 0px;
+  --radius-container: 0px;
+  --radius-interactive: 0px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary-black: var(--primary-black);
+  --color-secondary-black: var(--secondary-black);
+  --color-primary-white: var(--primary-white);
+  --color-accent-gray: var(--accent-gray);
+  --color-accent-gray-light: var(--accent-gray-light);
+  --color-accent-pink: var(--accent-pink);
+
+  --shadow-accent-gray-glow: 0 0 20px var(--accent-gray);
+  --shadow-accent-pink-glow: 0 0 20px rgb(80, 80, 80);
+
+  --font-sans: var(--font-montserrat);
+  --font-heading: var(--font-unbounded);
+
+  --radius-image: var(--radius-image);
+  --radius-container: var(--radius-container);
+  --radius-interactive: var(--radius-interactive);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* El sitio siempre es oscuro (no hay modo claro) */
+body {
+  background: var(--primary-black);
+  color: var(--primary-white);
+  font-family: var(--font-montserrat), sans-serif;
+  /* El sitio viejo nunca fija line-height globalmente (usa el "normal" del navegador).
+     El Preflight de Tailwind fuerza line-height:1.5 en <html>, lo que infla la altura
+     de cualquier texto que no tenga su propio line-height explícito (ej. los links del
+     menú). Se restaura "normal" acá para igualar el comportamiento del sitio viejo. */
+  line-height: normal;
+}
+
+/* Red de seguridad permanente: al abrir el menú mobile, el contenido de fondo se
+   escala/traslada con GSAP (efecto "página que se aleja") y queda más ancho que el
+   viewport. `overflow:hidden` en <body> (aplicado por JS al abrir el menú) no alcanza
+   para bloquear el drag/rubber-band horizontal en mobile Safari, así que sin esto se
+   puede arrastrar la página y ver el contenido de fondo desalineado. */
+html,
+body {
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Título estándar de sección (NUESTRA HISTORIA, ENCONTRATE EN LA PISTA, HIGHLIGHTS...).
+   El sitio viejo lo define como selector global de tag <h2> con 3 escalones responsive;
+   se replica en @layer base para que un className explícito en un <h2> puntual
+   (p. ej. el de Eventos) siga ganando por especificidad de capa de Tailwind. */
+@layer base {
+  h2 {
+    margin: 1.2rem 0 0.3rem;
+    padding: 0.3em 0 0.1em;
+    color: var(--primary-white);
+    font-family: var(--font-montserrat), sans-serif;
+    font-size: 1.5rem;
+    font-weight: 300;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.25), 0 1px 0 rgba(255, 255, 255, 0.13);
+  }
+
+  @media (min-width: 768px) {
+    h2 {
+      margin: 1.9rem 0 0.4rem;
+      padding: 0.5em 0 0.15em;
+      font-size: 1.5rem;
+      font-weight: 400;
+    }
+  }
+
+  @media (min-width: 1367px) {
+    h2 {
+      font-size: 2.4rem;
+    }
   }
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  scrollbar-width: none;
+}
+
+@keyframes splashLogoIn {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes desplazamiento-infinito {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(30%);
+  }
+}
+
+@keyframes aparecerTarjeta {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scroll-right {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
