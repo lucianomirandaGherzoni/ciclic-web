@@ -20,16 +20,18 @@ export default async function Home() {
       <PageContainer>
         <Hero />
       </PageContainer>
-      <Temporada
-        bannerUrl={config.banner_url}
-        bannerUrlMobile={config.banner_url_mobile}
-        ticketsUrl={ticketsUrl}
-      />
+      {config.mostrar_temporada !== false && (
+        <Temporada
+          bannerUrl={config.banner_url}
+          bannerUrlMobile={config.banner_url_mobile}
+          ticketsUrl={ticketsUrl}
+        />
+      )}
       <Eventos />
-      <Galeria />
+      {config.mostrar_galeria !== false && <Galeria />}
       <About />
       <Stats />
-      <Highlights />
+      {config.mostrar_highlights !== false && <Highlights />}
       <Sponsors />
       <PromoModal config={promoModal} />
     </>

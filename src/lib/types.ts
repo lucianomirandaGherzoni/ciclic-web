@@ -18,6 +18,10 @@ export interface ConfigWeb {
   whatsapp?: string;
   tiktok?: string;
   youtube?: string;
+  mostrar_eventos?: boolean;
+  mostrar_temporada?: boolean;
+  mostrar_galeria?: boolean;
+  mostrar_highlights?: boolean;
 }
 
 // Forma cruda que devuelve el backend (GET /eventos)

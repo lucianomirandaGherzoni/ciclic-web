@@ -4,7 +4,9 @@ import EventosCarousel from "./EventosCarousel";
 export default async function Eventos() {
   const [eventos, config] = await Promise.all([getEventos(), getConfigWeb()]);
 
-  // Igual que el sitio viejo: si no hay eventos activos, la sección no se muestra.
+  // Igual que el sitio viejo: se puede ocultar a mano desde el admin
+  // (mostrar_eventos), y también se oculta sola si no hay eventos activos.
+  if (config.mostrar_eventos === false) return null;
   if (eventos.length === 0) return null;
 
   const ticketsUrl = config.banner_tickets_url || config.ticketera_url;
