@@ -11,8 +11,6 @@ const SIZES_BANNER = "(max-width: 767px) 100vw, (max-width: 1613px) 62vw, 1000px
 const MARQUEE_TEXT = "TU ONDA NOS ENCUENTRA - NUESTRA COMUNIDAD TE RECIBE - LA FIESTA ES TU CASA";
 const MARQUEE_REPEATED = `${MARQUEE_TEXT} ${MARQUEE_TEXT} ${MARQUEE_TEXT} `;
 
-const DEFAULT_VIDEO_SRC =
-  "https://mwdzrnqjflyebzwgvlfj.supabase.co/storage/v1/object/public/CICLIC-CONTENT/1786131760471-dyd6fkly754.mp4";
 const DEFAULT_IMG_SRC = "/img/summer-flyer-desktop.png";
 const VIDEO_EXTENSIONS = ["mp4", "webm", "ogg", "mov"];
 
@@ -28,29 +26,33 @@ export default function Temporada({ bannerUrl, bannerUrlMobile, ticketsUrl }: Te
   const track2Ref = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const [media, setMedia] = useState<{ type: "video" | "image"; src: string }>({
-    type: "video",
-    src: DEFAULT_VIDEO_SRC,
-  });
+  // null = todavía no sabemos si el admin cargó imagen o video (no se puede
+  // derivar en el render: depende de window.innerWidth, que no existe en SSR).
+  // Mientras sea null NO se monta ni <video> ni <img>, para no disparar un
+  // fetch a un medio que todavía no se identificó.
+  const [media, setMedia] = useState<{ type: "video" | "image"; src: string } | null>(null);
   const [videoFailed, setVideoFailed] = useState(false);
 
-  // El banner de temporada viene de config_web (banner_url / banner_url_mobile);
-  // si no hay dato en la API, se mantiene el video de fallback hardcodeado.
-  // window.innerWidth no existe en SSR, así que esto no se puede derivar durante
-  // el render — debe resolverse post-hidratación en un efecto.
+  // El banner de temporada viene de config_web (banner_url / banner_url_mobile)
+  // y puede ser imagen o video — el admin sube uno u otro. Si la API no tiene
+  // ninguno de los dos cargado, cae a la imagen estática local (nunca a un
+  // video hardcodeado: eso fue lo que generaba el fetch roto en loop).
   useEffect(() => {
     const isMobile = window.innerWidth < 768;
     const resolvedUrl = isMobile ? bannerUrlMobile || bannerUrl : bannerUrl || bannerUrlMobile;
-    if (!resolvedUrl) return;
+    if (!resolvedUrl) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- sincroniza con window.innerWidth, no derivable en render (SSR)
+      setMedia({ type: "image", src: DEFAULT_IMG_SRC });
+      return;
+    }
     const ext = resolvedUrl.split("?")[0].split(".").pop()?.toLowerCase() ?? "";
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- sincroniza con window.innerWidth, no derivable en render (SSR)
     setMedia({ type: VIDEO_EXTENSIONS.includes(ext) ? "video" : "image", src: resolvedUrl });
   }, [bannerUrl, bannerUrlMobile]);
 
   // Reproduce el video de temporada una sola vez y lo deja en el último frame;
   // si falla (autoplay bloqueado, error de carga) cae a la imagen fija.
   useEffect(() => {
-    if (media.type !== "video") return;
+    if (media?.type !== "video") return;
     const video = videoRef.current;
     if (!video) return;
 
@@ -101,7 +103,9 @@ export default function Temporada({ bannerUrl, bannerUrlMobile, ticketsUrl }: Te
 
   const mediaClass =
     "block max-h-[525px] max-w-[262px] rounded-image object-cover shadow-[0_10px_40px_rgba(0,0,0,0.5)] md:h-auto md:w-[62vw] md:min-w-[520px] md:max-w-[1000px] max-md:h-auto max-md:max-h-none max-md:w-full max-md:max-w-full";
-  const showImage = media.type === "image" || videoFailed;
+  const isLoading = media === null;
+  const showVideo = !isLoading && media.type === "video" && !videoFailed;
+  const showImage = !isLoading && (media.type === "image" || videoFailed);
 
   return (
     <section id="temporada">
@@ -134,7 +138,12 @@ export default function Temporada({ bannerUrl, bannerUrlMobile, ticketsUrl }: Te
 
         <div className="relative z-10 mx-auto flex w-full max-w-[1200px] justify-center">
           <div className="group relative h-fit w-fit rounded-image shadow-[0_20px_50px_rgba(0,0,0,0.5)] max-md:w-[90vw] max-md:max-w-[320px]">
-            {!showImage && (
+            {isLoading && (
+              // Placeholder neutro mientras se resuelve config (imagen o video):
+              // sin src de ningún tipo, así no dispara ningún fetch antes de tiempo.
+              <div className={`${mediaClass} aspect-[262/525] animate-pulse bg-secondary-black`} />
+            )}
+            {showVideo && (
               <video ref={videoRef} muted playsInline preload="auto" className={mediaClass}>
                 <source src={media.src} type="video/mp4" />
                 Tu navegador no soporta videos.
