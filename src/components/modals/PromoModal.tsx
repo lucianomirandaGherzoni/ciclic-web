@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import type { PromoModalConfig } from "@/lib/types";
 import { useLenis } from "@/hooks/useLenis";
 
@@ -140,9 +141,8 @@ export default function PromoModal({ config }: { config: PromoModalConfig }) {
           </div>
 
           {tieneImagen && (
-            <div className="mx-auto mb-4 mt-1 h-[84px] w-[84px] overflow-hidden rounded-image border-2 border-[#333]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={config.imagen_promo} alt="Promoción" className="h-full w-full object-cover" />
+            <div className="relative mx-auto mb-4 mt-1 h-[84px] w-[84px] overflow-hidden rounded-image border-2 border-[#333]">
+              <Image src={config.imagen_promo!} alt="Promoción" fill sizes="84px" className="object-cover" />
             </div>
           )}
 

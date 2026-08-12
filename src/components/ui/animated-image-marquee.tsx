@@ -2,7 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useAnimationFrame, useMotionValue } from "framer-motion";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { shimmerDataUrl } from "@/lib/imagePlaceholder";
+
+// El card mide h-48 (192px) en mobile y h-64 (256px) en md+, con aspect-[3/4]
+// (ancho = alto * 3/4): 144px y 192px respectivamente.
+const SIZES_CARD = "(max-width: 767px) 144px, 192px";
 
 // Puerto fiel del marquee de fotos rotadas de "AnimatedMarqueeHero" (shadcn-style,
 // framer-motion): mismas polaroids con rotación alternada y mismo mecanismo de
@@ -69,12 +75,14 @@ export function AnimatedImageMarquee({ items, className, duration = 35 }: Animat
               style={{ rotate: `${i % 2 === 0 ? -2 : 5}deg` }}
               className="group relative aspect-[3/4] h-48 shrink-0 overflow-hidden bg-secondary-black shadow-md transition-transform duration-300 hover:z-20 hover:rotate-0! hover:scale-110 md:h-64"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={item.src}
                 alt={label || "Foto de la galería"}
+                fill
+                sizes={SIZES_CARD}
+                placeholder={shimmerDataUrl(192, 256)}
                 draggable={false}
-                className="pointer-events-none h-full w-full select-none object-cover"
+                className="pointer-events-none select-none object-cover"
               />
               <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center gap-0.5 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-2 pt-8 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                 <span className="text-[0.65rem] font-semibold uppercase tracking-wide text-white">{item.title}</span>

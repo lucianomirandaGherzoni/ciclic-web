@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import type { VenueUI } from "@/lib/types";
+import { shimmerDataUrl } from "@/lib/imagePlaceholder";
+
+// El contenedor es siempre min(90vw, 1400px) (ver className del contenedor mas
+// abajo), sin variar por breakpoint.
+const SIZES_SLIDE = "(min-width: 1556px) 1400px, 90vw";
 
 interface Props {
   venues: VenueUI[];
@@ -130,11 +136,13 @@ export default function HighlightsCarousel({ venues }: Props) {
               className="group relative h-full w-full shrink-0 cursor-pointer overflow-hidden"
               onClick={() => openVideoModal(index)}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={slide.src}
                 alt={slide.title}
-                className="h-full w-full object-cover transition-transform duration-[600ms] ease-in-out group-hover:scale-[1.02]"
+                fill
+                sizes={SIZES_SLIDE}
+                placeholder={shimmerDataUrl(1400, 700)}
+                className="object-cover transition-transform duration-[600ms] ease-in-out group-hover:scale-[1.02]"
               />
               <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2 bg-gradient-to-b from-transparent to-black/80 p-4 md:gap-4 md:p-8">
                 <h3

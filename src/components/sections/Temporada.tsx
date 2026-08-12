@@ -1,8 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { shimmerDataUrl } from "@/lib/imagePlaceholder";
+
+const SIZES_BANNER = "(max-width: 767px) 100vw, (max-width: 1613px) 62vw, 1000px";
 
 const MARQUEE_TEXT = "TU ONDA NOS ENCUENTRA - NUESTRA COMUNIDAD TE RECIBE - LA FIESTA ES TU CASA";
 const MARQUEE_REPEATED = `${MARQUEE_TEXT} ${MARQUEE_TEXT} ${MARQUEE_TEXT} `;
@@ -137,13 +141,18 @@ export default function Temporada({ bannerUrl, bannerUrlMobile, ticketsUrl }: Te
               </video>
             )}
             {showImage && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              // mediaClass ya define ancho por breakpoint (w-full en mobile,
+              // w-[62vw] clamped en desktop) y alto auto (md:h-auto /
+              // max-md:h-auto) — no hace falta pisarlo con style inline, a
+              // diferencia del patrón "width/height reales + style auto" de
+              // otras imágenes de este cambio.
+              <Image
                 src={media.type === "image" ? media.src : DEFAULT_IMG_SRC}
                 alt="Flyer temporada verano - versión desktop"
                 width={262}
                 height={525}
-                loading="lazy"
+                sizes={SIZES_BANNER}
+                placeholder={shimmerDataUrl(262, 525)}
                 className={mediaClass}
               />
             )}

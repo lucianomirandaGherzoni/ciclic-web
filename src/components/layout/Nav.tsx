@@ -2,10 +2,12 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "@/lib/gsap";
 import { useLenis } from "@/hooks/useLenis";
 import { useMenuContainerRef } from "@/hooks/useMenuContainer";
+import { shimmerDataUrl } from "@/lib/imagePlaceholder";
 
 interface MenuLink {
   href: string;
@@ -239,11 +241,13 @@ export default function Nav({ ticketsUrl, eventosDisponibles = true, bannerImage
           <div className="flex w-full flex-1 flex-col gap-8 p-4 md:flex-row">
             <div className="hidden flex-[3] md:flex md:items-center md:justify-center">
               <div className="relative h-full w-1/2 overflow-hidden rounded-image [@media(min-width:1024px)_and_(max-width:1366px)]:w-[45%]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={bannerImage || DEFAULT_MENU_IMAGE}
                   alt=""
-                  className="absolute inset-0 h-full w-full object-cover"
+                  fill
+                  sizes="40vw"
+                  placeholder={shimmerDataUrl(700, 900)}
+                  className="object-cover"
                 />
               </div>
             </div>

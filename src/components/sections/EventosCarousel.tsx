@@ -1,9 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import type { EventoUI } from "@/lib/types";
 import { useLenis } from "@/hooks/useLenis";
 import { toWhatsappUrl } from "@/lib/utils";
+import { shimmerDataUrl } from "@/lib/imagePlaceholder";
+
+const SIZES_TARJETA =
+  "(max-width: 767px) 90vw, (max-width: 1023px) 450px, (max-width: 1366px) 300px, (max-width: 1600px) 350px, 700px";
 
 const BREAKPOINT_PANTALLA_GRANDE = 1024;
 
@@ -210,12 +215,13 @@ export default function EventosCarousel({ eventos, ticketsUrl, whatsappNumber }:
                     COMPRAR TICKETS
                   </div>
                 </div>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={imagenTarjeta}
                   alt={evento.titulo}
-                  loading="lazy"
-                  className={`pointer-events-none absolute inset-0 z-[1] h-full w-full rounded-[inherit] object-cover transition-all duration-500 group-hover:scale-105 ${
+                  fill
+                  sizes={SIZES_TARJETA}
+                  placeholder={shimmerDataUrl(450, 600)}
+                  className={`pointer-events-none z-[1] rounded-[inherit] object-cover transition-all duration-500 group-hover:scale-105 ${
                     usarImagenModalEnTarjetas ? "lg:scale-100 lg:object-contain lg:object-center lg:group-hover:scale-100" : ""
                   }`}
                 />
@@ -309,11 +315,18 @@ export default function EventosCarousel({ eventos, ticketsUrl, whatsappNumber }:
               )}
             </div>
 
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={modalEvento.imagenModal}
               alt={modalEvento.titulo}
-              className="mx-auto mb-8 block h-auto max-h-[60vh] w-auto max-w-full rounded-image object-contain shadow-[0_10px_30px_rgba(0,0,0,0.3)] max-md:mb-6 max-md:max-h-[40vh]"
+              // Ancho/alto reales desconocidos (vienen de una URL remota, sin
+              // metadata en la DB): el valor es solo una guía para el srcset,
+              // el tamaño final en pantalla lo define el style de abajo.
+              width={1200}
+              height={1200}
+              sizes="(max-width: 767px) 90vw, 900px"
+              placeholder={shimmerDataUrl(1200, 1200)}
+              style={{ width: "auto", height: "auto" }}
+              className="mx-auto mb-8 block max-h-[60vh] max-w-full rounded-image object-contain shadow-[0_10px_30px_rgba(0,0,0,0.3)] max-md:mb-6 max-md:max-h-[40vh]"
             />
 
             <p className="mb-8 text-[1.1rem] font-light leading-[1.6] text-accent-gray-light">
@@ -368,13 +381,16 @@ export default function EventosCarousel({ eventos, ticketsUrl, whatsappNumber }:
               <i className="fab fa-whatsapp text-[1.2rem] text-[#25D366]" /> RESERVÁ TU MESA
             </a>
 
-            <div className="mx-auto w-full max-w-[400px] overflow-hidden rounded-image border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+            <div className="relative mx-auto w-full max-w-[400px] overflow-hidden rounded-image border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
+              <Image
                 src={modalMesasEvento.imagenMapaMesas}
                 alt="Mapa de distribución de mesas - Evento CICLIC"
-                loading="lazy"
-                className="block h-auto w-full"
+                width={400}
+                height={400}
+                sizes="(max-width: 400px) 100vw, 400px"
+                placeholder={shimmerDataUrl(400, 400)}
+                style={{ width: "100%", height: "auto" }}
+                className="block"
               />
             </div>
           </div>
