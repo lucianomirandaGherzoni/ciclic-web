@@ -1,7 +1,9 @@
 export interface SuscriptorInput {
   nombre?: string;
+  apellido?: string;
   email: string;
   ciudad?: string;
+  telefono?: string;
   origen: "footer" | "popup";
 }
 
@@ -91,11 +93,12 @@ export interface VenueUI {
 // Refleja 1:1 la tabla promo_modal (fila única, id=1)
 export interface PromoModalConfig {
   activo?: boolean;
-  modelo?: number;
   titulo?: string;
-  subtitulo?: string;
-  tipo_contenido?: "texto" | "imagen";
   texto_promo?: string;
   imagen_promo?: string;
   texto_boton?: string;
+  campo_nombre?: boolean;
+  campo_apellido?: boolean;
+  campo_telefono?: boolean;
+  campo_ciudad?: boolean;
 }

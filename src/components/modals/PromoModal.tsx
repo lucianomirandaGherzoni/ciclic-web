@@ -9,6 +9,22 @@ const DELAY_MS = 10000;
 
 type Status = "idle" | "loading" | "success";
 
+// Campos configurables del formulario de suscripción. Email siempre se muestra
+// (no es configurable); el resto depende de los flags campo_* de promo_modal.
+// Mantené esta lista sincronizada con ciclic-admin/js/promoPreview.js.
+const CAMPOS_SUSCRIPCION: {
+  key: "nombre" | "apellido" | "email" | "telefono" | "ciudad";
+  label: string;
+  type: string;
+  enabled: (config: PromoModalConfig) => boolean;
+}[] = [
+  { key: "nombre", label: "Nombre", type: "text", enabled: (c) => !!c.campo_nombre },
+  { key: "apellido", label: "Apellido", type: "text", enabled: (c) => !!c.campo_apellido },
+  { key: "email", label: "Email", type: "email", enabled: () => true },
+  { key: "telefono", label: "Teléfono", type: "tel", enabled: (c) => !!c.campo_telefono },
+  { key: "ciudad", label: "Ciudad", type: "text", enabled: (c) => !!c.campo_ciudad },
+];
+
 export default function PromoModal({ config }: { config: PromoModalConfig }) {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
@@ -42,6 +58,13 @@ export default function PromoModal({ config }: { config: PromoModalConfig }) {
     };
   }, [open, lenisRef]);
 
+  const activo = Boolean(config.activo);
+  const titulo = config.titulo || "Sumate A Nuestra Comunidad";
+  const textoBoton = config.texto_boton || "Suscribirse";
+  const tieneImagen = activo && !!config.imagen_promo;
+  const tieneTexto = activo && !!config.texto_promo;
+  const camposActivos = CAMPOS_SUSCRIPCION.filter((campo) => campo.enabled(config));
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
@@ -52,9 +75,9 @@ export default function PromoModal({ config }: { config: PromoModalConfig }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          nombre: String(fd.get("nombre") || "").trim(),
-          email: String(fd.get("email") || "").trim(),
-          ciudad: String(fd.get("ciudad") || "").trim(),
+          ...Object.fromEntries(
+            camposActivos.map((campo) => [campo.key, String(fd.get(campo.key) || "").trim()])
+          ),
           origen: "popup",
         }),
       });
@@ -71,14 +94,6 @@ export default function PromoModal({ config }: { config: PromoModalConfig }) {
       form.reset();
     }
   }
-
-  const activo = Boolean(config.activo);
-  const titulo = config.titulo || "FREES, PROMOCIONES Y DESCUENTOS";
-  const subtitulo = config.subtitulo || "Sumate A Nuestra Comunidad";
-  const textoBoton = config.texto_boton || "Suscribirse";
-  const modelo = activo ? Number(config.modelo) || 2 : 1;
-  const esImagen = activo && config.tipo_contenido === "imagen" && !!config.imagen_promo;
-  const esTexto = activo && config.tipo_contenido === "texto" && !!config.texto_promo;
 
   return (
     <div
@@ -106,91 +121,44 @@ export default function PromoModal({ config }: { config: PromoModalConfig }) {
         </button>
 
         <div className="flex flex-col items-center text-center">
-          {modelo === 2 && activo ? (
-            <div className={`relative h-[190px] w-full shrink-0 overflow-hidden rounded-t-image ${esImagen ? "" : "bg-gradient-to-br from-[#1a1a1a] to-black"}`}>
-              {esImagen && (
-                <>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={config.imagen_promo} alt="Promoción" className="h-full w-full object-cover opacity-75" />
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent from-40% to-black/95" />
-                </>
-              )}
-              <div className="absolute inset-x-6 bottom-4 text-center">
-                <div className="mb-1 text-[0.7rem] uppercase tracking-[1.5px] text-accent-gray-light">{titulo}</div>
-                <h3 className="font-heading text-[1.15rem] font-medium text-white">{subtitulo}</h3>
-                {esTexto && <div className="mt-[0.3rem] text-[0.75rem] font-light text-accent-gray-light">{config.texto_promo}</div>}
-              </div>
-            </div>
-          ) : (
-            <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/img/logos/CICLIC-BLANCO.png"
-                alt="CICLIC Logo - Música Electrónica Bariloche"
-                width={200}
-                height={60}
-                loading="lazy"
-                className="my-[0.8rem] mt-7 w-[100px]"
-              />
-              <div className="mb-6 text-center">
-                <p className="mb-[0.55rem] text-[0.8rem] font-light tracking-[0.5px] text-white">{titulo}</p>
-                <h3 className="m-0 text-base font-light italic text-[#999]">{subtitulo}</h3>
-              </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/img/logos/CICLIC-BLANCO.png"
+            alt="CICLIC Logo - Música Electrónica Bariloche"
+            width={200}
+            height={60}
+            loading="lazy"
+            className="my-[0.8rem] mt-7 w-[100px]"
+          />
+          <div className="mb-6 text-center">
+            <h3 className="m-0 text-base font-light italic text-[#999]">{titulo}</h3>
+          </div>
 
-              {modelo === 3 && esImagen && (
-                <div className="mx-auto mb-5 mt-1 h-[110px] w-4/5 overflow-hidden rounded-image">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={config.imagen_promo} alt="Promoción" className="h-full w-full object-cover" />
-                </div>
-              )}
-              {modelo === 3 && !esImagen && esTexto && (
-                <div className="relative mx-auto mb-5 mt-1 w-4/5 rounded-container border-[1.5px] border-dashed border-[#555] bg-white/[0.02] p-[1.1rem] text-center before:absolute before:left-[-9px] before:top-1/2 before:h-[18px] before:w-[18px] before:-translate-y-1/2 before:rounded-interactive before:bg-primary-black after:absolute after:right-[-9px] after:top-1/2 after:h-[18px] after:w-[18px] after:-translate-y-1/2 after:rounded-interactive after:bg-primary-black">
-                  <div className="font-heading text-[1.3rem] font-semibold tracking-[0.02em] text-white">{config.texto_promo}</div>
-                </div>
-              )}
-              {modelo === 1 && esImagen && (
-                <div className="mx-auto mb-4 mt-1 h-[84px] w-[84px] overflow-hidden rounded-image border-2 border-[#333]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={config.imagen_promo} alt="Promoción" className="h-full w-full object-cover" />
-                </div>
-              )}
-              {modelo === 1 && !esImagen && esTexto && (
-                <div className="mx-auto mb-4 mt-1 w-4/5 rounded-container border border-[#333] p-[0.6rem_1rem] text-center text-[0.9rem] font-medium text-accent-gray-light">
-                  {config.texto_promo}
-                </div>
-              )}
-            </>
+          {tieneImagen && (
+            <div className="mx-auto mb-4 mt-1 h-[84px] w-[84px] overflow-hidden rounded-image border-2 border-[#333]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={config.imagen_promo} alt="Promoción" className="h-full w-full object-cover" />
+            </div>
+          )}
+          {tieneTexto && (
+            <div className="mx-auto mb-4 mt-1 w-4/5 rounded-container border border-[#333] p-[0.6rem_1rem] text-center text-[0.9rem] font-medium text-accent-gray-light">
+              {config.texto_promo}
+            </div>
           )}
 
-          <div className={`flex w-full flex-col items-center gap-2 px-6 pb-6 ${modelo === 2 && activo ? "pt-6" : ""}`}>
+          <div className="flex w-full flex-col items-center gap-2 px-6 pb-6">
             <form ref={formRef} onSubmit={handleSubmit} className="w-4/5">
-              <div className="mb-4">
-                <input
-                  name="nombre"
-                  type="text"
-                  placeholder="Nombre"
-                  required
-                  className="w-full border-0 border-b border-[#444] bg-transparent py-3 text-sm font-light text-white outline-none transition-colors duration-300 placeholder:text-[#666] focus:border-b-[#777]"
-                />
-              </div>
-              <div className="mb-4">
-                <input
-                  name="email"
-                  type="email"
-                  placeholder="Email"
-                  required
-                  className="w-full border-0 border-b border-[#444] bg-transparent py-3 text-sm font-light text-white outline-none transition-colors duration-300 placeholder:text-[#666] focus:border-b-[#777]"
-                />
-              </div>
-              <div className="mb-4">
-                <input
-                  name="ciudad"
-                  type="text"
-                  placeholder="Ciudad"
-                  required
-                  className="w-full border-0 border-b border-[#444] bg-transparent py-3 text-sm font-light text-white outline-none transition-colors duration-300 placeholder:text-[#666] focus:border-b-[#777]"
-                />
-              </div>
+              {camposActivos.map((campo) => (
+                <div className="mb-4" key={campo.key}>
+                  <input
+                    name={campo.key}
+                    type={campo.type}
+                    placeholder={campo.label}
+                    required
+                    className="w-full border-0 border-b border-[#444] bg-transparent py-3 text-sm font-light text-white outline-none transition-colors duration-300 placeholder:text-[#666] focus:border-b-[#777]"
+                  />
+                </div>
+              ))}
               <button
                 type="submit"
                 disabled={status === "loading"}

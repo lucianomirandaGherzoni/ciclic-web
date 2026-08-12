@@ -55,13 +55,13 @@ describe("getPromoModal", () => {
   it("devuelve el JSON de la API cuando la respuesta es OK", async () => {
     vi.mocked(fetch).mockResolvedValue({
       ok: true,
-      json: async () => ({ activo: true, modelo: 2 }),
+      json: async () => ({ activo: true, titulo: "Sumate A Nuestra Comunidad" }),
     } as Response);
     const { getPromoModal } = await import("./api");
 
     const config = await getPromoModal();
 
-    expect(config).toEqual({ activo: true, modelo: 2 });
+    expect(config).toEqual({ activo: true, titulo: "Sumate A Nuestra Comunidad" });
   });
 
   it("si la API falla, devuelve un objeto vacío en vez de tirar error", async () => {
