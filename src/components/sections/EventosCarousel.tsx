@@ -256,7 +256,10 @@ export default function EventosCarousel({ eventos, ticketsUrl, whatsappNumber }:
           }}
         >
           <div className="pointer-events-auto fixed inset-0 bg-[rgba(10,10,10,0.95)] backdrop-blur-[5px]" />
-          <div className="relative z-[10000] mx-auto my-[5vh] max-w-[60rem] rounded-container border border-white/10 bg-secondary-black p-12 text-primary-white shadow-[0_20px_50px_rgba(0,0,0,0.8)] max-md:my-0 max-md:max-h-[85vh] max-md:w-full max-md:max-w-[400px] max-md:overflow-y-auto max-md:border-white/15 max-md:p-6 max-md:px-6 max-md:py-10">
+          <div
+            data-lenis-prevent
+            className="relative z-[10000] mx-auto my-[5vh] max-h-[90vh] w-full max-w-[60rem] overflow-y-auto rounded-container border border-white/10 bg-secondary-black p-12 text-primary-white shadow-[0_20px_50px_rgba(0,0,0,0.8)] max-md:my-0 max-md:max-h-[85vh] max-md:max-w-[400px] max-md:border-white/15 max-md:p-6 max-md:px-6 max-md:py-10"
+          >
             <button
               type="button"
               onClick={() => setModalEvento(null)}
@@ -283,10 +286,22 @@ export default function EventosCarousel({ eventos, ticketsUrl, whatsappNumber }:
               >
                 Tickets
               </a>
-              {modalEvento.imagenMapaMesas && (
+              {modalEvento.tieneMesas && (
                 <button
                   type="button"
-                  onClick={() => setModalMesasEvento(modalEvento)}
+                  onClick={() => {
+                    // Si hay imagen del mapa, la mostramos en su propio modal; si el
+                    // admin activó "tiene mesas" sin subir imagen, vamos directo a
+                    // WhatsApp con el mensaje ya armado para ese evento.
+                    if (modalEvento.imagenMapaMesas) {
+                      setModalMesasEvento(modalEvento);
+                      return;
+                    }
+                    const numero = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || whatsappNumber;
+                    if (!numero) return;
+                    const mensaje = `Hola! Quiero reservar una mesa para el evento "${modalEvento.titulo}".`;
+                    window.open(toWhatsappUrl(numero, mensaje), "_blank", "noopener,noreferrer");
+                  }}
                   className="rounded-interactive border border-primary-white bg-transparent px-5 py-[0.6rem] text-center text-sm font-semibold uppercase tracking-wide text-primary-white transition-all duration-300 hover:bg-transparent max-md:flex-1 max-md:px-3 max-md:py-[0.6rem] max-md:text-xs"
                 >
                   Reservar Mesa

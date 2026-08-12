@@ -59,6 +59,9 @@ function mapEventos(data: EventoDTO[]): EventoUI[] {
     const imgMapaMesas = rawMapaMesas == null ? "" : String(rawMapaMesas).trim();
     const hasMapaMesas =
       !!imgMapaMesas && imgMapaMesas.toLowerCase() !== "null" && imgMapaMesas.toLowerCase() !== "undefined";
+    // El botón "Reservar Mesa" también puede activarse a mano desde el admin
+    // (tiene_mesas) sin haber cargado una imagen del mapa todavía.
+    const tieneMesas = hasMapaMesas || !!item.tiene_mesas;
 
     let fechaFormateada = "PRÓXIMAMENTE";
     if (item.fecha) {
@@ -84,7 +87,7 @@ function mapEventos(data: EventoDTO[]): EventoUI[] {
       titulo: item.titulo || "Evento sin título",
       descripcion: item.descripcion || "",
       linkTickets: item.link_tickets || null,
-      tieneMesas: hasMapaMesas,
+      tieneMesas,
       fecha: fechaFormateada,
       precio: item.precio || "",
       imagenTarjeta: imgTarjeta,

@@ -114,6 +114,25 @@ describe("getEventos", () => {
     expect(eventos[0].fecha).toMatch(/ene/i);
   });
 
+  it("activa tieneMesas si el admin lo tildó a mano, aunque no haya imagen de mapa", async () => {
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => [
+        {
+          id: 2,
+          titulo: "Evento sin mapa",
+          fecha: "2026-02-20",
+          tiene_mesas: true,
+        },
+      ],
+    } as Response);
+    const { getEventos } = await import("./api");
+
+    const eventos = await getEventos();
+
+    expect(eventos[0]).toMatchObject({ tieneMesas: true, imagenMapaMesas: null });
+  });
+
   it("si la API falla, devuelve un array vacío", async () => {
     vi.mocked(fetch).mockRejectedValue(new Error("network error"));
     const { getEventos } = await import("./api");

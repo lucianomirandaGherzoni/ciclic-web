@@ -37,6 +37,7 @@ export interface EventoDTO {
   imagen_mapa_mesas?: string | null;
   imagen_mapa?: string | null;
   mapa_mesas?: string | null;
+  tiene_mesas?: boolean;
   fecha?: string;
   precio?: string;
   ubicacion?: string;
