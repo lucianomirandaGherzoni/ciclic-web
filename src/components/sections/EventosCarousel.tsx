@@ -258,7 +258,7 @@ export default function EventosCarousel({ eventos, ticketsUrl, whatsappNumber }:
           <div className="pointer-events-auto fixed inset-0 bg-[rgba(10,10,10,0.95)] backdrop-blur-[5px]" />
           <div
             data-lenis-prevent
-            className="relative z-[10000] mx-auto my-[5vh] max-h-[90vh] w-full max-w-[60rem] overflow-y-auto rounded-container border border-white/10 bg-secondary-black p-12 text-primary-white shadow-[0_20px_50px_rgba(0,0,0,0.8)] max-md:my-0 max-md:max-h-[85vh] max-md:max-w-[400px] max-md:border-white/15 max-md:p-6 max-md:px-6 max-md:py-10"
+            className="relative z-[10000] mx-auto my-[5vh] max-h-[90vh] w-full max-w-[60rem] overflow-y-auto rounded-container border border-white/10 bg-secondary-black p-12 text-primary-white shadow-[0_20px_50px_rgba(0,0,0,0.8)] [scrollbar-color:var(--accent-gray)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:block [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-accent-gray/60 [&::-webkit-scrollbar-thumb:hover]:bg-accent-gray-light [&::-webkit-scrollbar-track]:bg-transparent max-md:my-0 max-md:max-h-[85vh] max-md:max-w-[400px] max-md:border-white/15 max-md:p-6 max-md:px-6 max-md:py-10"
           >
             <button
               type="button"
