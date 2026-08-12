@@ -132,17 +132,17 @@ export default function PromoModal({ config }: { config: PromoModalConfig }) {
           />
           <div className="mb-6 text-center">
             <h3 className="m-0 text-base font-light italic text-[#999]">{titulo}</h3>
+            {tieneTexto && (
+              <p className="m-0 mt-[0.4rem] text-center text-[0.8rem] font-light text-accent-gray-light">
+                {config.texto_promo}
+              </p>
+            )}
           </div>
 
           {tieneImagen && (
             <div className="mx-auto mb-4 mt-1 h-[84px] w-[84px] overflow-hidden rounded-image border-2 border-[#333]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={config.imagen_promo} alt="Promoción" className="h-full w-full object-cover" />
-            </div>
-          )}
-          {tieneTexto && (
-            <div className="mx-auto mb-4 mt-1 w-4/5 rounded-container border border-[#333] p-[0.6rem_1rem] text-center text-[0.9rem] font-medium text-accent-gray-light">
-              {config.texto_promo}
             </div>
           )}
 
