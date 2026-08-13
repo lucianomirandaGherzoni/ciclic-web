@@ -6,9 +6,9 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { shimmerDataUrl } from "@/lib/imagePlaceholder";
 
-// El card mide h-48 (192px) en mobile y h-64 (256px) en md+, con aspect-[3/4]
-// (ancho = alto * 3/4): 144px y 192px respectivamente.
-const SIZES_CARD = "(max-width: 767px) 144px, 192px";
+// El card mide h-60 (240px) en mobile y h-64 (256px) en md+, con aspect-[3/4]
+// (ancho = alto * 3/4): 180px y 192px respectivamente.
+const SIZES_CARD = "(max-width: 767px) 180px, 192px";
 
 // Puerto fiel del marquee de fotos rotadas de "AnimatedMarqueeHero" (shadcn-style,
 // framer-motion): mismas polaroids con rotación alternada y mismo mecanismo de
@@ -73,7 +73,7 @@ export function AnimatedImageMarquee({ items, className, duration = 35 }: Animat
           const card = (
             <div
               style={{ rotate: `${i % 2 === 0 ? -2 : 5}deg` }}
-              className="group relative aspect-[3/4] h-48 shrink-0 overflow-hidden bg-secondary-black shadow-md transition-transform duration-300 hover:z-20 hover:rotate-0! hover:scale-110 md:h-64"
+              className="group relative aspect-[3/4] h-60 shrink-0 overflow-hidden bg-secondary-black shadow-md transition-transform duration-300 hover:z-20 hover:rotate-0! hover:scale-110 md:h-64"
             >
               <Image
                 src={item.src}

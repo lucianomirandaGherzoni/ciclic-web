@@ -20,7 +20,7 @@ function GaleriaSkeleton() {
       {Array.from({ length: 7 }).map((_, i) => (
         <div
           key={i}
-          className="aspect-[3/4] h-48 shrink-0 animate-pulse bg-secondary-black md:h-64"
+          className="aspect-[3/4] h-60 shrink-0 animate-pulse bg-secondary-black md:h-64"
         />
       ))}
     </div>
