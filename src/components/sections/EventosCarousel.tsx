@@ -1,16 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import type { EventoUI } from "@/lib/types";
 import { useLenis } from "@/hooks/useLenis";
 import { toWhatsappUrl } from "@/lib/utils";
 import { shimmerDataUrl } from "@/lib/imagePlaceholder";
-
-const SIZES_TARJETA =
-  "(max-width: 767px) 90vw, (max-width: 1023px) 450px, (max-width: 1366px) 300px, (max-width: 1600px) 350px, 700px";
-
-const BREAKPOINT_PANTALLA_GRANDE = 1024;
+import { CoverflowCarousel } from "@/components/ui/coverflow-carousel";
 
 interface Props {
   eventos: EventoUI[];
@@ -18,142 +14,11 @@ interface Props {
   whatsappNumber?: string;
 }
 
-function obtenerX(e: MouseEvent | TouchEvent): number {
-  if (e.type.startsWith("mouse")) return (e as MouseEvent).pageX;
-  return (e as TouchEvent).touches[0].pageX;
-}
-
 export default function EventosCarousel({ eventos, ticketsUrl, whatsappNumber }: Props) {
-  const contenedorRef = useRef<HTMLDivElement>(null);
-  const drag = useRef({ arrastrando: false, inicioX: 0, scrollIzquierdaInicio: 0, seMovio: false });
   const lenisRef = useLenis();
 
-  const [isWide, setIsWide] = useState(false);
   const [modalEvento, setModalEvento] = useState<EventoUI | null>(null);
   const [modalMesasEvento, setModalMesasEvento] = useState<EventoUI | null>(null);
-
-  const usarImagenModalEnTarjetas = eventos.length <= 3 && isWide;
-  const centrarCards = eventos.length <= 3;
-  const mostrarFlechas = eventos.length > 3;
-
-  useEffect(() => {
-    const onResize = () => setIsWide(window.innerWidth >= BREAKPOINT_PANTALLA_GRANDE);
-    onResize();
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
-  function ajustarScrollAlEvento() {
-    const contenedor = contenedorRef.current;
-    if (!contenedor) return;
-    const tarjetas = contenedor.querySelectorAll<HTMLElement>(".tarjeta");
-    if (!tarjetas.length) return;
-
-    const contenedorRect = contenedor.getBoundingClientRect();
-    const centerX = contenedorRect.left + contenedorRect.width / 2;
-
-    let tarjetaMasCercana = tarjetas[0];
-    let distanciaMinima = Math.abs(
-      tarjetas[0].getBoundingClientRect().left + tarjetas[0].getBoundingClientRect().width / 2 - centerX,
-    );
-    tarjetas.forEach((tarjeta) => {
-      const rect = tarjeta.getBoundingClientRect();
-      const centerTarjeta = rect.left + rect.width / 2;
-      const distancia = Math.abs(centerTarjeta - centerX);
-      if (distancia < distanciaMinima) {
-        distanciaMinima = distancia;
-        tarjetaMasCercana = tarjeta;
-      }
-    });
-
-    const desplazamiento =
-      tarjetaMasCercana.offsetLeft - contenedor.clientWidth / 2 + tarjetaMasCercana.offsetWidth / 2;
-    contenedor.scrollTo({ left: desplazamiento, behavior: "smooth" });
-  }
-
-  useEffect(() => {
-    const contenedor = contenedorRef.current;
-    if (!contenedor) return;
-    const state = drag.current;
-
-    function iniciarArrastre(e: MouseEvent | TouchEvent) {
-      state.arrastrando = true;
-      state.seMovio = false;
-      contenedor!.style.cursor = "grabbing";
-      contenedor!.style.scrollBehavior = "auto";
-      state.inicioX = obtenerX(e) - contenedor!.offsetLeft;
-      state.scrollIzquierdaInicio = contenedor!.scrollLeft;
-    }
-
-    function duranteArrastre(e: MouseEvent | TouchEvent) {
-      if (!state.arrastrando) return;
-      const x = obtenerX(e) - contenedor!.offsetLeft;
-      const desplazamiento = x - state.inicioX;
-      if (Math.abs(desplazamiento) > 3) state.seMovio = true;
-      contenedor!.scrollLeft = state.scrollIzquierdaInicio - desplazamiento;
-    }
-
-    function terminarArrastre() {
-      state.arrastrando = false;
-      contenedor!.style.cursor = "grab";
-      contenedor!.style.scrollBehavior = "smooth";
-      if (state.seMovio) {
-        const desplazamientoTotal = Math.abs(contenedor!.scrollLeft - state.scrollIzquierdaInicio);
-        if (desplazamientoTotal > 30) {
-          ajustarScrollAlEvento();
-        } else {
-          contenedor!.scrollTo({ left: state.scrollIzquierdaInicio, behavior: "smooth" });
-        }
-      }
-    }
-
-    contenedor.addEventListener("mousedown", iniciarArrastre);
-    contenedor.addEventListener("mouseleave", terminarArrastre);
-    contenedor.addEventListener("mouseup", terminarArrastre);
-    contenedor.addEventListener("mousemove", duranteArrastre);
-    contenedor.addEventListener("touchstart", iniciarArrastre, { passive: true });
-    contenedor.addEventListener("touchend", terminarArrastre);
-    contenedor.addEventListener("touchmove", duranteArrastre, { passive: false });
-
-    return () => {
-      contenedor.removeEventListener("mousedown", iniciarArrastre);
-      contenedor.removeEventListener("mouseleave", terminarArrastre);
-      contenedor.removeEventListener("mouseup", terminarArrastre);
-      contenedor.removeEventListener("mousemove", duranteArrastre);
-      contenedor.removeEventListener("touchstart", iniciarArrastre);
-      contenedor.removeEventListener("touchend", terminarArrastre);
-      contenedor.removeEventListener("touchmove", duranteArrastre);
-    };
-  }, []);
-
-  function desplazar(direccion: "izquierda" | "derecha") {
-    const contenedor = contenedorRef.current;
-    const tarjeta = contenedor?.querySelector<HTMLElement>(".tarjeta");
-    if (!contenedor || !tarjeta) return;
-
-    const { scrollLeft, scrollWidth, clientWidth } = contenedor;
-    const tarjetaWidth = tarjeta.offsetWidth + 24;
-
-    if (direccion === "derecha") {
-      if (scrollLeft >= scrollWidth - clientWidth - 5) {
-        contenedor.scrollTo({ left: 0, behavior: "smooth" });
-      } else {
-        contenedor.scrollBy({ left: tarjetaWidth, behavior: "smooth" });
-      }
-    } else {
-      if (scrollLeft <= 5) {
-        contenedor.scrollTo({ left: scrollWidth - clientWidth, behavior: "smooth" });
-      } else {
-        contenedor.scrollBy({ left: -tarjetaWidth, behavior: "smooth" });
-      }
-    }
-
-    setTimeout(() => ajustarScrollAlEvento(), 600);
-  }
-
-  function handleCardClick(evento: EventoUI) {
-    if (!drag.current.seMovio) setModalEvento(evento);
-  }
 
   // Bloquea el scroll de fondo (Lenis + body) mientras el modal de evento está abierto,
   // igual que el sitio viejo; Escape cierra solo el modal principal.
@@ -177,82 +42,28 @@ export default function EventosCarousel({ eventos, ticketsUrl, whatsappNumber }:
     };
   }, [modalEvento, lenisRef]);
 
-  const tarjetaBase =
-    "tarjeta group relative h-[25.5rem] w-72 shrink-0 origin-center translate-y-5 cursor-pointer overflow-hidden rounded-image bg-secondary-black opacity-0 transition-[transform,box-shadow] duration-300 [animation:aparecerTarjeta_0.5s_ease-out_forwards] hover:-translate-y-[5px] hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)] max-md:aspect-[3/4] max-md:h-auto max-md:w-[90vw] max-md:max-w-[320px] md:h-[600px] md:w-[450px] [@media(min-width:1024px)_and_(max-width:1366px)]:h-[calc(100vh-260px)] [@media(min-width:1024px)_and_(max-width:1366px)]:w-[300px] [@media(min-width:1367px)_and_(max-width:1600px)]:h-[calc(100vh-280px)] [@media(min-width:1367px)_and_(max-width:1600px)]:w-[350px]";
-  const tarjetaWideExtra = usarImagenModalEnTarjetas
-    ? " lg:aspect-[2.32/1] lg:h-auto lg:w-[clamp(360px,44vw,700px)] lg:bg-[#090909]"
-    : "";
+  const slides = eventos.map((evento) => ({
+    src: evento.imagenTarjeta,
+    alt: evento.titulo,
+    title: evento.titulo,
+    subtitle: evento.fecha,
+    meta: evento.precio ? [{ label: "Precio", value: evento.precio }] : undefined,
+  }));
 
   return (
     <div className="carrusel relative w-full">
-      <div
-        ref={contenedorRef}
-        className={`carrusel__contenedor flex cursor-grab select-none overflow-x-auto scroll-smooth px-2 py-4 [-ms-overflow-style:none] [scrollbar-width:none] active:cursor-grabbing [&::-webkit-scrollbar]:hidden ${
-          centrarCards ? "cursor-default overflow-x-hidden active:cursor-default" : ""
-        }`}
-      >
-        <div
-          className={`carrusel__lista flex gap-6 pl-4 pr-8 ${
-            centrarCards ? "w-full min-w-full justify-center pl-0 pr-0" : "min-w-max"
-          }`}
-        >
-          {eventos.map((evento, indice) => {
-            const imagenTarjeta = usarImagenModalEnTarjetas
-              ? evento.imagenModal || evento.imagenTarjeta
-              : evento.imagenTarjeta;
-            return (
-              <div
-                key={evento.id}
-                className={tarjetaBase + tarjetaWideExtra}
-                style={{ animationDelay: `${indice * 0.1}s` }}
-                onClick={() => handleCardClick(evento)}
-              >
-                <div className="pointer-events-none absolute inset-0 z-[2] rounded-[inherit] [background:linear-gradient(to_bottom,rgba(0,0,0,0.2)_0%,transparent_50%,rgba(0,0,0,0.9)_100%)]" />
-                <div className="relative z-[3] flex h-full flex-col justify-end p-4 text-primary-white">
-                  <div
-                    className={`translate-y-[10px] text-left text-[1.1rem] font-bold leading-[1.1] text-primary-white opacity-0 transition-all duration-300 [text-shadow:0_2px_4px_rgba(0,0,0,0.5)] group-hover:translate-y-0 group-hover:opacity-100 max-md:text-[1.3rem]`}
-                  >
-                    COMPRAR TICKETS
-                  </div>
-                </div>
-                <Image
-                  src={imagenTarjeta}
-                  alt={evento.titulo}
-                  fill
-                  sizes={SIZES_TARJETA}
-                  placeholder={shimmerDataUrl(450, 600)}
-                  className={`pointer-events-none z-[1] rounded-[inherit] object-cover transition-all duration-500 group-hover:scale-105 ${
-                    usarImagenModalEnTarjetas ? "lg:scale-100 lg:object-contain lg:object-center lg:group-hover:scale-100" : ""
-                  }`}
-                />
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {mostrarFlechas && (
-        <div className="carrusel__controles mt-6 mr-2 flex justify-end gap-3 max-md:ml-4 max-md:mr-0 max-md:justify-start">
-          <button
-            type="button"
-            onClick={() => desplazar("izquierda")}
-            className="flex h-12 w-12 items-center justify-center rounded-interactive bg-white/5 text-primary-white transition-all duration-300 hover:bg-primary-white hover:text-primary-black"
-          >
-            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            onClick={() => desplazar("derecha")}
-            className="flex h-12 w-12 items-center justify-center rounded-interactive bg-white/5 text-primary-white transition-all duration-300 hover:bg-primary-white hover:text-primary-black"
-          >
-            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-      )}
+      <CoverflowCarousel
+        slides={slides}
+        cardWidth="clamp(200px, 28vw, 380px)"
+        cardAspect={3 / 4}
+        showCaption
+        showNavigation={eventos.length > 1}
+        showPagination={eventos.length > 1}
+        paginationPosition="middle"
+        activateLabel="Ver info"
+        label="Carrusel de próximos eventos"
+        onSlideActivate={(indice) => setModalEvento(eventos[indice])}
+      />
 
       {modalEvento && (
         <div
@@ -280,7 +91,7 @@ export default function EventosCarousel({ eventos, ticketsUrl, whatsappNumber }:
               {modalEvento.fecha} | {modalEvento.ubicacion}
             </div>
             <h2 className="mb-8 text-[2.5rem] font-bold uppercase leading-[1.1] text-primary-white max-md:mt-2 max-md:text-[1.8rem]">
-              COMPRAR ENTRADAS
+              {modalEvento.titulo}
             </h2>
 
             <div className="mb-8 flex flex-wrap gap-4 max-md:items-start max-md:gap-3">
