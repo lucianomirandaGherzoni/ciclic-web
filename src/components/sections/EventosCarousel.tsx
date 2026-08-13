@@ -87,10 +87,10 @@ export default function EventosCarousel({ eventos, ticketsUrl, whatsappNumber }:
               </svg>
             </button>
 
-            <div className="mb-2 text-sm font-medium uppercase tracking-wide text-accent-gray">
+            <div className="mb-2 text-xs font-medium uppercase tracking-wide text-accent-gray">
               {modalEvento.fecha} | {modalEvento.ubicacion}
             </div>
-            <h2 className="mb-8 text-[2.5rem] font-bold uppercase leading-[1.1] text-primary-white max-md:mt-2 max-md:text-[1.8rem]">
+            <h2 className="mb-8 text-[clamp(1.8rem,5vw,2.5rem)] font-bold uppercase leading-[1.1] text-primary-white max-md:mt-2">
               {modalEvento.titulo}
             </h2>
 
@@ -99,7 +99,7 @@ export default function EventosCarousel({ eventos, ticketsUrl, whatsappNumber }:
                 href={modalEvento.linkTickets || ticketsUrl || "#"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-interactive border border-primary-white bg-primary-white px-5 py-[0.6rem] text-center text-sm font-semibold uppercase tracking-wide text-primary-black transition-all duration-300 hover:bg-transparent hover:text-primary-white max-md:flex-1 max-md:px-3 max-md:py-[0.6rem] max-md:text-xs"
+                className="rounded-interactive border border-primary-white bg-primary-white px-5 py-[0.6rem] text-center text-sm font-semibold uppercase tracking-wide text-primary-black transition-all duration-300 hover:bg-transparent hover:text-primary-white max-md:flex-1 max-md:px-3 max-md:py-[0.6rem]"
               >
                 Tickets
               </a>
@@ -119,7 +119,7 @@ export default function EventosCarousel({ eventos, ticketsUrl, whatsappNumber }:
                     const mensaje = `Hola! Quiero reservar una mesa para el evento "${modalEvento.titulo}".`;
                     window.open(toWhatsappUrl(numero, mensaje), "_blank", "noopener,noreferrer");
                   }}
-                  className="rounded-interactive border border-primary-white bg-transparent px-5 py-[0.6rem] text-center text-sm font-semibold uppercase tracking-wide text-primary-white transition-all duration-300 hover:bg-transparent max-md:flex-1 max-md:px-3 max-md:py-[0.6rem] max-md:text-xs"
+                  className="rounded-interactive border border-primary-white bg-transparent px-5 py-[0.6rem] text-center text-sm font-semibold uppercase tracking-wide text-primary-white transition-all duration-300 hover:bg-transparent max-md:flex-1 max-md:px-3 max-md:py-[0.6rem]"
                 >
                   Reservar Mesa
                 </button>
@@ -140,7 +140,7 @@ export default function EventosCarousel({ eventos, ticketsUrl, whatsappNumber }:
               className="mx-auto mb-8 block max-h-[60vh] max-w-full rounded-image object-contain shadow-[0_10px_30px_rgba(0,0,0,0.3)] max-md:mb-6 max-md:max-h-[40vh]"
             />
 
-            <p className="mb-8 text-[1.1rem] font-light leading-[1.6] text-accent-gray-light">
+            <p className="mb-8 text-[clamp(0.95rem,2vw,1.1rem)] font-light leading-[1.6] text-accent-gray-light">
               {modalEvento.descripcion}
             </p>
 
@@ -179,7 +179,7 @@ export default function EventosCarousel({ eventos, ticketsUrl, whatsappNumber }:
               </svg>
             </button>
 
-            <h2 className="mb-6 text-center text-[1.6rem] font-bold uppercase tracking-[2px] text-primary-white max-md:text-[1.5rem]">
+            <h2 className="mb-6 text-center text-[clamp(1.5rem,4vw,1.6rem)] font-bold uppercase tracking-[2px] text-primary-white">
               MAPA DE MESAS
             </h2>
 

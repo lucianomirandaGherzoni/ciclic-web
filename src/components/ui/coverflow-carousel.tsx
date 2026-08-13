@@ -467,16 +467,16 @@ export function CoverflowCarousel({
           key={selected}
           className="mt-2 flex flex-col items-center px-6 [animation:fadeInUp_0.3s_ease-out]"
         >
-          <p className="text-[15px] font-semibold tracking-tight text-primary-white">
+          <p className="text-base font-semibold tracking-tight text-primary-white">
             {active.title}
           </p>
           {active.subtitle && (
-            <p className="mt-1 text-[13px] text-accent-gray-light">
+            <p className="mt-1 text-xs text-accent-gray-light">
               {active.subtitle}
             </p>
           )}
           {active.meta && active.meta.length > 0 && (
-            <dl className="mt-6 w-full max-w-[230px] text-[12px]">
+            <dl className="mt-6 w-full max-w-[230px] text-xs">
               {active.meta.map((row) => (
                 <div key={row.label} className="flex justify-between py-[5px]">
                   <dt className="text-accent-gray-light">{row.label}</dt>
