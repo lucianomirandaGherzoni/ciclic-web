@@ -16,7 +16,7 @@ export default async function Home() {
 
   return (
     <>
-      {/* Solo el Hero va dentro de .container: es lo único que rota/escala cuando se abre el menú mobile */}
+      {/* Solo el Hero va dentro de PageContainer: es lo único que rota/escala cuando se abre el menú mobile */}
       <PageContainer>
         <Hero />
       </PageContainer>

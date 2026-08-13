@@ -34,11 +34,22 @@ interface NavProps {
   ticketsUrl?: string;
   eventosDisponibles?: boolean;
   bannerImage?: string;
+  instagram?: string;
+  tiktok?: string;
+  youtube?: string;
 }
 
 const DEFAULT_MENU_IMAGE = "/img/ciclic-logo-3.png";
 
-export default function Nav({ ticketsUrl, eventosDisponibles = true, bannerImage }: NavProps) {
+export default function Nav({
+  ticketsUrl,
+  eventosDisponibles = true,
+  bannerImage,
+  instagram,
+  tiktok,
+  youtube,
+}: NavProps) {
+  const socialLinks: Record<string, string | undefined> = { instagram, youtube, tiktok };
   const menuLinks = MENU_LINKS.filter((link) => eventosDisponibles || link.href !== "#eventos").map((link) =>
     link.label === "PASSLINE TICKETS"
       ? { ...link, href: ticketsUrl || process.env.NEXT_PUBLIC_TICKETS_URL || "#" }
@@ -268,18 +279,23 @@ export default function Nav({ ticketsUrl, eventosDisponibles = true, bannerImage
                 ))}
               </div>
               <div className="flex flex-col gap-2">
-                {MENU_SOCIALS.map((s) => (
-                  <div key={s.label} className="overflow-hidden pb-1.5">
-                    <a
-                      href="#"
-                      data-social={s.social}
-                      onClick={closeMenu}
-                      className="menu-social-item inline-block translate-y-[120%] text-[#8f8f8f] opacity-25 transition-colors duration-500 hover:text-white"
-                    >
-                      <i className={`fab ${s.icon} mr-1`} /> {s.label}
-                    </a>
-                  </div>
-                ))}
+                {MENU_SOCIALS.map((s) => {
+                  const href = socialLinks[s.social];
+                  return (
+                    <div key={s.label} className="overflow-hidden pb-1.5">
+                      <a
+                        href={href || "#"}
+                        target={href ? "_blank" : undefined}
+                        rel={href ? "noopener noreferrer" : undefined}
+                        data-social={s.social}
+                        onClick={closeMenu}
+                        className="menu-social-item inline-block translate-y-[120%] text-[#8f8f8f] opacity-25 transition-colors duration-500 hover:text-white"
+                      >
+                        <i className={`fab ${s.icon} mr-1`} /> {s.label}
+                      </a>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

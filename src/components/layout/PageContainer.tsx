@@ -7,7 +7,7 @@ export default function PageContainer({ children }: { children: ReactNode }) {
   const containerRef = useMenuContainerRef();
 
   return (
-    <div ref={containerRef} className="container">
+    <div ref={containerRef} className="w-full">
       {children}
     </div>
   );

@@ -1,10 +1,30 @@
 import Newsletter from "./Newsletter";
+import { toWhatsappUrl } from "@/lib/utils";
 
 interface FooterProps {
   eventosDisponibles?: boolean;
+  ticketsUrl?: string;
+  whatsapp?: string;
+  instagram?: string;
+  tiktok?: string;
+  youtube?: string;
 }
 
-export default function Footer({ eventosDisponibles = true }: FooterProps) {
+export default function Footer({
+  eventosDisponibles = true,
+  ticketsUrl,
+  whatsapp,
+  instagram,
+  tiktok,
+  youtube,
+}: FooterProps) {
+  const whatsappNumber = whatsapp || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+  const reservaMesaHref = whatsappNumber
+    ? toWhatsappUrl(whatsappNumber, "Hola! Quiero reservar una mesa.")
+    : "#";
+  const contactoHref = whatsappNumber
+    ? toWhatsappUrl(whatsappNumber, "Hola! Quería hacerles una consulta.")
+    : "#";
   return (
     <footer className="bg-secondary-black">
       <div className="mx-auto max-w-[1200px] px-6 py-16">
@@ -28,17 +48,27 @@ export default function Footer({ eventosDisponibles = true }: FooterProps) {
                 </li>
               )}
               <li>
-                <a href="#" className="text-white/70 transition-colors hover:text-white">
+                <a href="#galeria" className="text-white/70 transition-colors hover:text-white">
                   Eventos Pasados
                 </a>
               </li>
               <li>
-                <a href="#" className="text-white/70 transition-colors hover:text-white">
+                <a
+                  href={reservaMesaHref}
+                  target={whatsappNumber ? "_blank" : undefined}
+                  rel={whatsappNumber ? "noopener noreferrer" : undefined}
+                  className="text-white/70 transition-colors hover:text-white"
+                >
                   Reservar Mesa
                 </a>
               </li>
               <li>
-                <a href="#" className="text-white/70 transition-colors hover:text-white">
+                <a
+                  href={ticketsUrl || "#"}
+                  target={ticketsUrl ? "_blank" : undefined}
+                  rel={ticketsUrl ? "noopener noreferrer" : undefined}
+                  className="text-white/70 transition-colors hover:text-white"
+                >
                   Tickets
                 </a>
               </li>
@@ -49,7 +79,12 @@ export default function Footer({ eventosDisponibles = true }: FooterProps) {
             <h4 className="mb-3 text-sm font-medium text-white">Información</h4>
             <ul className="flex flex-col gap-2 text-sm">
               <li>
-                <a href="#contacto" className="text-white/70 transition-colors hover:text-white">
+                <a
+                  href={contactoHref}
+                  target={whatsappNumber ? "_blank" : undefined}
+                  rel={whatsappNumber ? "noopener noreferrer" : undefined}
+                  className="text-white/70 transition-colors hover:text-white"
+                >
                   Contacto
                 </a>
               </li>
@@ -77,13 +112,31 @@ export default function Footer({ eventosDisponibles = true }: FooterProps) {
           <div>
             <h4 className="mb-3 text-sm font-medium text-white">Seguinos</h4>
             <div className="mb-6 flex flex-col gap-2 text-sm">
-              <a href="#" data-social="instagram" className="text-white/70 transition-colors hover:text-white">
+              <a
+                href={instagram || "#"}
+                target={instagram ? "_blank" : undefined}
+                rel={instagram ? "noopener noreferrer" : undefined}
+                data-social="instagram"
+                className="text-white/70 transition-colors hover:text-white"
+              >
                 Instagram
               </a>
-              <a href="#" data-social="tiktok" className="text-white/70 transition-colors hover:text-white">
+              <a
+                href={tiktok || "#"}
+                target={tiktok ? "_blank" : undefined}
+                rel={tiktok ? "noopener noreferrer" : undefined}
+                data-social="tiktok"
+                className="text-white/70 transition-colors hover:text-white"
+              >
                 TikTok
               </a>
-              <a href="#" className="text-white/70 transition-colors hover:text-white">
+              <a
+                href={youtube || "#"}
+                target={youtube ? "_blank" : undefined}
+                rel={youtube ? "noopener noreferrer" : undefined}
+                data-social="youtube"
+                className="text-white/70 transition-colors hover:text-white"
+              >
                 YouTube
               </a>
             </div>
