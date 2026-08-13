@@ -87,7 +87,10 @@ const JSON_LD = {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const [config, eventos] = await Promise.all([getConfigWeb(), getEventos()]);
-  const eventosDisponibles = eventos.length > 0;
+  // Mismo criterio que la sección Eventos (config.mostrar_eventos + que haya
+  // eventos activos): si la sección no se renderiza, tampoco debe verse el
+  // link "#eventos" en el Nav ni en el Footer.
+  const eventosDisponibles = config.mostrar_eventos !== false && eventos.length > 0;
 
   return (
     <html lang="es" className={montserrat.variable}>
@@ -112,9 +115,19 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               ticketsUrl={config.ticketera_url}
               eventosDisponibles={eventosDisponibles}
               bannerImage={config.banner_url_mobile}
+              instagram={config.instagram}
+              tiktok={config.tiktok}
+              youtube={config.youtube}
             />
             {children}
-            <Footer eventosDisponibles={eventosDisponibles} />
+            <Footer
+              eventosDisponibles={eventosDisponibles}
+              ticketsUrl={config.ticketera_url}
+              whatsapp={config.whatsapp}
+              instagram={config.instagram}
+              tiktok={config.tiktok}
+              youtube={config.youtube}
+            />
             <FloatingButtons whatsappNumber={config.whatsapp} />
           </LenisProvider>
         </MenuContainerProvider>
