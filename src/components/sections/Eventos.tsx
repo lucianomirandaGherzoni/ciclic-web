@@ -13,9 +13,7 @@ export default async function Eventos() {
 
   return (
     <section id="eventos" className="contenedor-principal relative mx-auto w-full max-w-[95%] bg-primary-black px-4 py-12">
-      <h2 className="mb-6 pl-2 text-[1.9rem] font-medium uppercase tracking-[-0.1rem] text-primary-white max-md:text-[1.7rem]">
-        PRÓXIMOS EVENTOS
-      </h2>
+      <h2>PRÓXIMOS EVENTOS</h2>
       <EventosCarousel eventos={eventos} ticketsUrl={ticketsUrl} whatsappNumber={config.whatsapp} />
     </section>
   );
