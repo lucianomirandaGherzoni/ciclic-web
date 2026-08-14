@@ -67,7 +67,7 @@ export default function EventosCarousel({ eventos, ticketsUrl, whatsappNumber }:
 
       {modalEvento && (
         <div
-          className="fixed inset-0 z-[9999] overflow-y-auto [overscroll-behavior:contain] max-md:fixed max-md:inset-0 max-md:flex max-md:items-center max-md:justify-center max-md:p-4"
+          className="scrollbar-square fixed inset-0 z-[9999] overflow-y-auto [overscroll-behavior:contain] max-md:fixed max-md:inset-0 max-md:flex max-md:items-center max-md:justify-center max-md:p-4"
           onClick={(e) => {
             if (e.target === e.currentTarget) setModalEvento(null);
           }}
@@ -75,7 +75,7 @@ export default function EventosCarousel({ eventos, ticketsUrl, whatsappNumber }:
           <div className="pointer-events-auto fixed inset-0 bg-[rgba(10,10,10,0.95)] backdrop-blur-[5px]" />
           <div
             data-lenis-prevent
-            className="relative z-[10000] mx-auto my-[5vh] max-h-[90vh] w-full max-w-[60rem] overflow-y-auto rounded-container border border-white/10 bg-secondary-black p-12 text-primary-white shadow-[0_20px_50px_rgba(0,0,0,0.8)] [scrollbar-color:var(--accent-gray)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:block [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-none [&::-webkit-scrollbar-thumb]:bg-accent-gray/60 [&::-webkit-scrollbar-thumb:hover]:bg-accent-gray-light [&::-webkit-scrollbar-track]:rounded-none [&::-webkit-scrollbar-track]:bg-transparent max-md:my-0 max-md:max-h-[85vh] max-md:max-w-[400px] max-md:border-white/15 max-md:p-6 max-md:px-6 max-md:py-10"
+            className="scrollbar-square relative z-[10000] mx-auto my-[5vh] max-h-[90vh] w-full max-w-[60rem] overflow-y-auto rounded-container border border-white/10 bg-secondary-black p-12 text-primary-white shadow-[0_20px_50px_rgba(0,0,0,0.8)] max-md:my-0 max-md:max-h-[85vh] max-md:max-w-[400px] max-md:border-white/15 max-md:p-6 max-md:px-6 max-md:py-10"
           >
             <button
               type="button"
@@ -87,19 +87,16 @@ export default function EventosCarousel({ eventos, ticketsUrl, whatsappNumber }:
               </svg>
             </button>
 
-            <div className="mb-2 text-xs font-medium uppercase tracking-wide text-accent-gray">
-              {modalEvento.fecha} | {modalEvento.ubicacion}
-            </div>
-            <h2 className="mb-8 text-[clamp(1.8rem,5vw,2.5rem)] font-bold uppercase leading-[1.1] text-primary-white max-md:mt-2">
+            <h2 className="mb-8 text-[clamp(1.4rem,5vw,2.5rem)] font-bold uppercase leading-[1.1] text-primary-white">
               {modalEvento.titulo}
             </h2>
 
-            <div className="mb-8 flex flex-wrap gap-4 max-md:items-start max-md:gap-3">
+            <div className="mb-10 flex flex-wrap gap-4 max-md:items-start max-md:gap-3">
               <a
                 href={modalEvento.linkTickets || ticketsUrl || "#"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-interactive border border-primary-white bg-primary-white px-5 py-[0.6rem] text-center text-sm font-semibold uppercase tracking-wide text-primary-black transition-all duration-300 hover:bg-transparent hover:text-primary-white max-md:flex-1 max-md:px-3 max-md:py-[0.6rem]"
+                className="rounded-interactive border border-primary-white bg-primary-white px-5 py-[0.6rem] text-center text-sm font-semibold uppercase tracking-wide text-primary-black transition-all duration-300 hover:bg-transparent hover:text-primary-white max-md:flex-1 max-md:px-3 max-md:py-[0.6rem] max-md:text-xs max-md:tracking-normal"
               >
                 Tickets
               </a>
@@ -119,42 +116,72 @@ export default function EventosCarousel({ eventos, ticketsUrl, whatsappNumber }:
                     const mensaje = `Hola! Quiero reservar una mesa para el evento "${modalEvento.titulo}".`;
                     window.open(toWhatsappUrl(numero, mensaje), "_blank", "noopener,noreferrer");
                   }}
-                  className="rounded-interactive border border-primary-white bg-transparent px-5 py-[0.6rem] text-center text-sm font-semibold uppercase tracking-wide text-primary-white transition-all duration-300 hover:bg-transparent max-md:flex-1 max-md:px-3 max-md:py-[0.6rem]"
+                  className="rounded-interactive border border-primary-white bg-transparent px-5 py-[0.6rem] text-center text-sm font-semibold uppercase tracking-wide text-primary-white transition-all duration-300 hover:bg-transparent max-md:flex-1 max-md:px-3 max-md:py-[0.6rem] max-md:text-xs max-md:tracking-normal"
                 >
                   Reservar Mesa
                 </button>
               )}
             </div>
 
-            <Image
-              src={modalEvento.imagenModal}
-              alt={modalEvento.titulo}
-              // Ancho/alto reales desconocidos (vienen de una URL remota, sin
-              // metadata en la DB): el valor es solo una guía para el srcset,
-              // el tamaño final en pantalla lo define el style de abajo.
-              width={1200}
-              height={1200}
-              sizes="(max-width: 767px) 90vw, 900px"
-              placeholder={shimmerDataUrl(1200, 1200)}
-              style={{ width: "auto", height: "auto" }}
-              className="mx-auto mb-8 block max-h-[60vh] max-w-full rounded-image object-contain shadow-[0_10px_30px_rgba(0,0,0,0.3)] max-md:mb-6 max-md:max-h-[40vh]"
-            />
-
-            <p className="mb-8 text-[clamp(0.95rem,2vw,1.1rem)] font-light leading-[1.6] text-accent-gray-light">
-              {modalEvento.descripcion}
-            </p>
-
-            <div className="h-[300px] w-full overflow-hidden rounded-container border border-white/10">
-              <iframe
-                src={modalEvento.mapaUrl}
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                className="[filter:invert(90%)_hue-rotate(180deg)]"
+            <div className="grid gap-8 border-t border-white/10 pt-8 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:items-start md:gap-10">
+              <Image
+                src={modalEvento.imagenModal}
+                alt={modalEvento.titulo}
+                // Ancho/alto reales desconocidos (vienen de una URL remota, sin
+                // metadata en la DB): el valor es solo una guía para el srcset,
+                // el tamaño final en pantalla lo define el style de abajo.
+                width={1200}
+                height={1200}
+                sizes="(max-width: 767px) 90vw, 380px"
+                placeholder={shimmerDataUrl(1200, 1200)}
+                style={{ width: "auto", height: "auto" }}
+                className="mx-auto block max-h-[40vh] max-w-full rounded-image object-contain shadow-[0_10px_30px_rgba(0,0,0,0.3)] md:max-h-[480px]"
               />
+
+              <div className="flex flex-col gap-8">
+                <div>
+                  <div className="mb-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium uppercase tracking-wide text-accent-gray">
+                    <span className="inline-flex items-center gap-2">
+                      <i className="bi bi-calendar3 text-[0.9em]" aria-hidden="true" />
+                      {modalEvento.fecha}
+                    </span>
+                    <span className="inline-flex items-center gap-2">
+                      <i className="bi bi-geo-alt text-[0.9em]" aria-hidden="true" />
+                      {modalEvento.venue}
+                    </span>
+                    {modalEvento.precio && (
+                      <span className="inline-flex items-center gap-2">
+                        <i className="bi bi-tag text-[0.9em]" aria-hidden="true" />
+                        {modalEvento.precio}
+                      </span>
+                    )}
+                  </div>
+                  <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-accent-gray">
+                    Sobre el evento
+                  </div>
+                  <p className="text-[clamp(0.95rem,2vw,1.1rem)] font-light leading-[1.6] text-accent-gray-light">
+                    {modalEvento.descripcion}
+                  </p>
+                </div>
+
+                <div>
+                  <div className="mb-4 text-xs font-semibold uppercase tracking-wide text-accent-gray">
+                    Cómo llegar
+                  </div>
+                  <div className="h-[260px] w-full overflow-hidden rounded-map border border-white/10">
+                    <iframe
+                      src={modalEvento.mapaUrl}
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      className="[filter:invert(90%)_hue-rotate(180deg)]"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -162,7 +189,7 @@ export default function EventosCarousel({ eventos, ticketsUrl, whatsappNumber }:
 
       {modalMesasEvento?.imagenMapaMesas && (
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto p-4 [overscroll-behavior:contain]"
+          className="scrollbar-square fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto p-4 [overscroll-behavior:contain]"
           onClick={(e) => {
             if (e.target === e.currentTarget) setModalMesasEvento(null);
           }}

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Montserrat } from "next/font/google";
+import { Arimo } from "next/font/google";
 import "./globals.css";
 import { LenisProvider } from "@/hooks/useLenis";
 import { MenuContainerProvider } from "@/hooks/useMenuContainer";
@@ -9,8 +9,12 @@ import Footer from "@/components/layout/Footer";
 import FloatingButtons from "@/components/layout/FloatingButtons";
 import { getConfigWeb, getEventos } from "@/lib/api";
 
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
+// Arimo está dibujada para ser métricamente idéntica a Helvetica/Arial: es la
+// forma de tener "Helvetica" de verdad en todos los sistemas operativos (real
+// Helvetica no es una web font licenciable) sin depender de qué tenga
+// instalado cada usuario.
+const arimo = Arimo({
+  variable: "--font-arimo",
   subsets: ["latin"],
   style: ["normal", "italic"],
 });
@@ -93,7 +97,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const eventosDisponibles = config.mostrar_eventos !== false && eventos.length > 0;
 
   return (
-    <html lang="es" className={montserrat.variable}>
+    <html lang="es" className={arimo.variable}>
       <head>
         <link
           rel="stylesheet"
