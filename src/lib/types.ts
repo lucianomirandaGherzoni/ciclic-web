@@ -40,7 +40,7 @@ export interface EventoDTO {
   tiene_mesas?: boolean;
   fecha?: string;
   precio?: string;
-  ubicacion?: string;
+  venue?: string;
   iframe_mapa?: string;
 }
 
@@ -56,7 +56,7 @@ export interface EventoUI {
   imagenTarjeta: string;
   imagenModal: string;
   imagenMapaMesas: string | null;
-  ubicacion: string;
+  venue: string;
   mapaUrl: string;
 }
 

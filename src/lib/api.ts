@@ -93,7 +93,7 @@ function mapEventos(data: EventoDTO[]): EventoUI[] {
       imagenTarjeta: imgTarjeta,
       imagenModal: imgModal,
       imagenMapaMesas: hasMapaMesas ? imgMapaMesas : null,
-      ubicacion: item.ubicacion || "BARILOCHE",
+      venue: item.venue || "BARILOCHE",
       mapaUrl: iframeUrl,
     };
   });

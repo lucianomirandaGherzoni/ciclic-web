@@ -94,7 +94,7 @@ describe("getEventos", () => {
           descripcion: "Descripción",
           imagen_portada: "https://example.com/portada.jpg",
           fecha: "2026-01-15",
-          ubicacion: "Bariloche",
+          venue: "BOA | Base Cerro Catedral",
         },
       ],
     } as Response);
@@ -109,7 +109,7 @@ describe("getEventos", () => {
       imagenTarjeta: "https://example.com/portada.jpg",
       imagenModal: "https://example.com/portada.jpg",
       tieneMesas: false,
-      ubicacion: "Bariloche",
+      venue: "BOA | Base Cerro Catedral",
     });
     expect(eventos[0].fecha).toMatch(/ene/i);
   });
