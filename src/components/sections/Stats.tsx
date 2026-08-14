@@ -60,7 +60,7 @@ export default function Stats() {
   );
 
   return (
-    <section id="stats" ref={sectionRef} className="stats-section bg-primary-black px-4 py-6">
+    <section id="stats" ref={sectionRef} className="stats-section bg-primary-black px-4 pb-6 pt-2 md:py-6">
       <div className="stats-container mx-auto max-w-[1200px]">
         <div className="grid grid-cols-2 gap-4 md:grid-cols-[repeat(auto-fit,minmax(250px,1fr))] md:gap-6">
           {STATS.map((stat, i) => (

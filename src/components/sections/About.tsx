@@ -83,10 +83,10 @@ export default function About() {
   );
 
   return (
-    <section id="about" ref={sectionRef} className="about-section bg-primary-black px-4 py-16 md:py-24">
+    <section id="about" ref={sectionRef} className="about-section bg-primary-black px-4 pb-8 pt-16 md:py-24">
       <div className="about-container mx-auto max-w-[1100px]">
         {/* Imagen del equipo + tarjeta de texto superpuesta (layout tipo "bio card") */}
-        <div className="about-content relative mb-[34rem] md:mb-0">
+        <div className="about-content relative">
           <div className="about-image relative aspect-[4/5] w-full overflow-hidden rounded-image md:w-[38%]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -99,7 +99,7 @@ export default function About() {
             />
           </div>
 
-          <div className="about-text absolute inset-x-0 top-[88%] z-10 mx-auto w-[92%] rounded-container bg-secondary-black p-6 shadow-[0_20px_50px_rgba(0,0,0,0.5)] sm:p-8 md:inset-x-auto md:-right-10 md:top-1/2 md:mx-0 md:w-[68%] md:-translate-y-1/2 md:p-10">
+          <div className="about-text relative z-10 -mt-[15%] mx-auto w-[92%] rounded-container bg-secondary-black p-6 shadow-[0_20px_50px_rgba(0,0,0,0.5)] sm:p-8 md:absolute md:-right-10 md:top-1/2 md:mt-0 md:mx-0 md:w-[68%] md:-translate-y-1/2 md:p-10">
             <h2 className="mb-1 mt-0 p-0 text-left text-2xl normal-case leading-tight tracking-normal text-primary-white md:text-[2rem]">
               NUESTRA HISTORIA
             </h2>
